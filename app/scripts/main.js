@@ -61,11 +61,23 @@ if ('serviceWorker' in navigator && 'PushManager' in window) {
 }
 
 function initializeUI() {
+  pushButton.addEventListener('click', () => {
+    pushButton.disabled = true // make sure user cannot click button 2 times
+    if (isSubscribed) {
+      // TODO: Unsubscribe user
+    } else {
+      // TODO: subscribe user
+      subscribeUser();
+    }
+  })
   // set the initial subscription value
   swRegistration.pushManager.getSubscription()
     .then((subscription) => {
       console.log(subscription);
       isSubscribed = !(subscription === null);
+
+      updateSubscriptionOnServer(subscription);
+
       if (isSubscribed) {
         console.log('User is subscribed');
       } else {
@@ -83,4 +95,35 @@ function updateBtn() {
   }
 
   pushButton.disabled = false;
+}
+
+function subscribeUser() {
+  const applicationServerKey = urlB64ToUint8Array(applicationServerPublicKey);
+  swRegistration.pushManager.subscribe({
+    userVisibleOnly: true,
+    applicationServerKey: applicationServerKey
+  })
+    .then((subscription) => {
+      console.log('User is subscribe with subscription:', subscription);
+      updateSubscriptionOnServer(subscription);
+      isSubscribed = true;
+      updateBtn();
+    })
+    .catch((err) => {
+      console.log('Faild to subscribe the user:', err);
+      updateBtn();
+    })
+}
+
+function updateSubscriptionOnServer(subscription) {
+  // TODO: send subscription to application server
+
+  const subscriptionJson = document.querySelector('.js-subscription-json');
+  const subscriptionDetails = document.querySelector('.js-subscription-details');
+  if (subscription) {
+    subscriptionJson.textContent = JSON.stringify(subscription);
+    subscriptionDetails.classList.remove('is-invisible');
+  } else {
+    subscriptionDetails.classList.add('is-invisible');
+  }
 }
