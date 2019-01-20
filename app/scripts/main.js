@@ -50,6 +50,7 @@ if ('serviceWorker' in navigator && 'PushManager' in window) {
     .then((swReg) => {
       console.log('Service worker is registered', swReg);
       swRegistration = swReg;
+      initializeUI();
     })
     .catch(err => {
       console.error('Service Worker Error', err);
@@ -57,4 +58,29 @@ if ('serviceWorker' in navigator && 'PushManager' in window) {
 } else {
   console.warn('Push messaging is not supported');
   pushButton.textContent = 'Push Not Support';
+}
+
+function initializeUI() {
+  // set the initial subscription value
+  swRegistration.pushManager.getSubscription()
+    .then((subscription) => {
+      console.log(subscription);
+      isSubscribed = !(subscription === null);
+      if (isSubscribed) {
+        console.log('User is subscribed');
+      } else {
+        console.log('User is not subscribed');
+      }
+      updateBtn();
+    })
+}
+
+function updateBtn() {
+  if (isSubscribed) {
+    pushButton.textContent = 'Disabled Push Messaging';
+  } else {
+    pushButton.textContent = 'Enable Push Messaging';
+  }
+
+  pushButton.disabled = false;
 }
