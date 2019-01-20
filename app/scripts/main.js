@@ -60,6 +60,20 @@ if ('serviceWorker' in navigator && 'PushManager' in window) {
   pushButton.textContent = 'Push Not Support';
 }
 
+self.addEventListener('push', (event) => {
+  console.log('[Service Worker] Push Received.', event);
+  console.log(`[Service Worker] Push had this data: "${event.data.text()}"`);
+
+  const title = 'Push Codelab';
+  const options = {
+    body: 'Yay it works.',
+    icon: 'images/icon.png',
+    badge: 'images/badge.png'
+  };
+  const notificationPromise = self.registration.showNotification(title, options);
+  event.waitUntil(notificationPromise);
+})
+
 function initializeUI() {
   pushButton.addEventListener('click', () => {
     pushButton.disabled = true // make sure user cannot click button 2 times
@@ -88,6 +102,14 @@ function initializeUI() {
 }
 
 function updateBtn() {
+  console.log(Notification);
+
+  if (Notification.permission === 'denied') {
+    pushButton.textContent = 'Push Messaging blocked.';
+    pushButton.disabled = true;
+    updateSubscriptionOnServer(null);
+    return;
+  }
   if (isSubscribed) {
     pushButton.textContent = 'Disabled Push Messaging';
   } else {
