@@ -60,6 +60,7 @@ if ('serviceWorker' in navigator && 'PushManager' in window) {
   pushButton.textContent = 'Push Not Support';
 }
 
+// FOR EVENT push
 self.addEventListener('push', (event) => {
   console.log('[Service Worker] Push Received.', event);
   console.log(`[Service Worker] Push had this data: "${event.data.text()}"`);
@@ -73,6 +74,15 @@ self.addEventListener('push', (event) => {
   const notificationPromise = self.registration.showNotification(title, options);
   event.waitUntil(notificationPromise);
 })
+
+// FOR EVENT notificationclick
+self.addEventListener('notificationclick', function (event) {
+  console.log('[Service Worker] Notification click Received.');
+
+  event.notification.close();
+  const openNewWindowOrTabPromise = clients.openWindow('https://developers.google.com/web/');
+  event.waitUntil(openNewWindowOrTabPromise);
+});
 
 function initializeUI() {
   pushButton.addEventListener('click', () => {
