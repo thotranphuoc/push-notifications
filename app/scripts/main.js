@@ -20,8 +20,8 @@
 /* eslint-env browser, es6 */
 
 'use strict';
-
-const applicationServerPublicKey = '<Your Public Key>';
+// get keys from here: https://web-push-codelab.glitch.me/
+const applicationServerPublicKey = 'BG581OQVuGKIYYS5lTBzMWdDsyaP9k0BPYvxr3eTBbkT0JFjp4wskMVpjVJeD4RIFa9SgQ10cR3DmV7UDmWP0wo';
 
 const pushButton = document.querySelector('.js-push-btn');
 
